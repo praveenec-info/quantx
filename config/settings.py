@@ -1,6 +1,10 @@
 # Project configuration
 
-ASSETS = ["Gold", "Bitcoin", "NVIDIA"]
+ASSETS = {
+	"gold": {"name": "Gold", "ticker": "GC=F"},
+	"bitcoin": {"name": "Bitcoin", "ticker": "BTC-USD"},
+	"nvidia": {"name": "NVIDIA", "ticker": "NVDA"},
+}
 
 DEFAULT_SMA_PERIOD = 20
 DEFAULT_EMA_PERIOD = 20
@@ -12,5 +16,6 @@ TRADING_DAYS_PER_YEAR = 252
 INITIAL_CAPITAL = 100000.0
 
 TRANSACTION_COST = 0.001
+DEFAULT_POSITION_SIZE = 1.0
 
 RISK_FREE_RATE = 0.0
