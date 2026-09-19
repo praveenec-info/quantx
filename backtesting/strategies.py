@@ -31,6 +31,11 @@ def sma_crossover(data, short_window=20, long_window=50):
     return data
 
 
+def sma_crossover_strategy(data, short_window=20, long_window=50):
+    result = sma_crossover(data, short_window, long_window)
+    return result["Signal"]
+
+
 # ==========================================
 # EMA TREND STRATEGY
 # ==========================================
@@ -61,11 +66,16 @@ def ema_trend(data, short_window=20, long_window=50):
     return data
 
 
+def ema_trend_strategy(data, short_window=20, long_window=50):
+    result = ema_trend(data, short_window, long_window)
+    return result["Signal"]
+
+
 # ==========================================
 # MOMENTUM STRATEGY
 # ==========================================
 
-def momentum_strategy(data, lookback=20):
+def momentum(data, lookback=20):
 
     data = data.copy()
 
@@ -81,6 +91,11 @@ def momentum_strategy(data, lookback=20):
     ] = 1
 
     return data
+
+
+def momentum_strategy(data, lookback=20):
+    result = momentum(data, lookback)
+    return result["Signal"]
 
 
 # ==========================================
@@ -99,10 +114,14 @@ def mean_reversion(data, window=20):
 
     data["Signal"] = 0
 
-    # Buy when price is below its moving average
     data.loc[
         data["Close"] < data["Mean"],
         "Signal"
     ] = 1
 
     return data
+
+
+def mean_reversion_strategy(data, window=20):
+    result = mean_reversion(data, window)
+    return result["Signal"]
