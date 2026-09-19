@@ -1,8 +1,4 @@
 pandas
 numpy
 yfinance
-matplotlib
-plotly
-streamlit
-seaborn
 pytest

@@ -11,6 +11,7 @@ from analysis.risk import (
     calculate_sharpe_ratio,
     calculate_maximum_drawdown,
 )
+from analysis.correlation import calculate_correlation
 
 
 def create_sample_data():
@@ -97,3 +98,13 @@ def test_maximum_drawdown():
     result = calculate_maximum_drawdown(data)
 
     assert result <= 0
+
+
+def test_correlation_aligns_assets_by_date():
+    first = pd.DataFrame({"Date": pd.date_range("2024-01-01", periods=4), "Close": [1, 2, 3, 4]})
+    second = pd.DataFrame({"Date": pd.date_range("2024-01-02", periods=4), "Close": [2, 3, 4, 5]})
+
+    result = calculate_correlation({"first": first, "second": second})
+
+    assert list(result.columns) == ["first", "second"]
+    assert result.loc["first", "second"] == 1.0
