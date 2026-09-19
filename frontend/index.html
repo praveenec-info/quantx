@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MarketLens | Financial Intelligence</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <!-- ================= HEADER ================= -->
+
+    <header class="navbar">
+
+        <div class="logo">
+            <span class="logo-mark">M</span>
+            <div>
+                <h2>MarketLens</h2>
+                <p>Financial Intelligence</p>
+            </div>
+        </div>
+
+        <nav>
+            <a href="#overview">Overview</a>
+            <a href="#analysis">Analysis</a>
+            <a href="#strategies">Strategies</a>
+            <a href="#risk">Risk</a>
+        </nav>
+
+        <button class="refresh-btn" onclick="refreshDashboard()">
+            ↻ Refresh
+        </button>
+
+    </header>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main>
+
+        <!-- HERO -->
+
+        <section class="hero">
+
+            <div>
+                <p class="eyebrow">MULTI-ASSET MARKET ANALYTICS</p>
+
+                <h1>
+                    Understand the market.<br>
+                    <span>Before you act.</span>
+                </h1>
+
+                <p class="hero-text">
+                    Analyze historical performance, technical indicators,
+                    risk and trading strategies across multiple assets
+                    from one dashboard.
+                </p>
+            </div>
+
+            <div class="hero-info">
+
+                <div class="status-dot"></div>
+
+                <div>
+                    <small>DATA STATUS</small>
+                    <strong>Historical Dataset Ready</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= ASSET SELECTOR ================= -->
+
+        <section class="control-panel">
+
+            <div class="control-group">
+
+                <label>SELECT ASSET</label>
+
+                <div class="asset-buttons">
+
+                    <button class="asset-btn active"
+                        onclick="selectAsset('gold', this)">
+                        Gold
+                    </button>
+
+                    <button class="asset-btn"
+                        onclick="selectAsset('bitcoin', this)">
+                        Bitcoin
+                    </button>
+
+                    <button class="asset-btn"
+                        onclick="selectAsset('nvidia', this)">
+                        NVIDIA
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="control-group">
+
+                <label>TIME PERIOD</label>
+
+                <select id="periodSelect" onchange="changePeriod()">
+                    <option value="1Y">1 Year</option>
+                    <option value="3Y">3 Years</option>
+                    <option value="5Y">5 Years</option>
+                    <option value="ALL">All Historical Data</option>
+                </select>
+
+            </div>
+
+
+            <div class="selected-asset">
+
+                <span>Selected Asset</span>
+
+                <strong id="selectedAsset">
+                    Gold
+                </strong>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= OVERVIEW ================= -->
+
+        <section id="overview">
+
+            <div class="section-heading">
+
+                <div>
+                    <p class="eyebrow">MARKET OVERVIEW</p>
+                    <h2>Asset Performance</h2>
+                </div>
+
+                <span class="live-label">
+                    ● DATA VIEW
+                </span>
+
+            </div>
+
+
+            <div class="metric-grid">
+
+                <div class="metric-card">
+
+                    <span>Current Price</span>
+
+                    <h3 id="currentPrice">—</h3>
+
+                    <p class="neutral">Historical dataset</p>
+
+                </div>
+
+
+                <div class="metric-card">
+
+                    <span>Total Return</span>
+
+                    <h3 id="totalReturn">—</h3>
+
+                    <p class="neutral">Calculated from dataset</p>
+
+                </div>
+
+
+                <div class="metric-card">
+
+                    <span>Volatility</span>
+
+                    <h3 id="volatility">—</h3>
+
+                    <p class="neutral">Annualized</p>
+
+                </div>
+
+
+                <div class="metric-card">
+
+                    <span>Max Drawdown</span>
+
+                    <h3 id="drawdown">—</h3>
+
+                    <p class="neutral">Historical</p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= PRICE CHART ================= -->
+
+        <section class="chart-section" id="analysis">
+
+            <div class="section-heading">
+
+                <div>
+                    <p class="eyebrow">HISTORICAL DATA</p>
+                    <h2>Price & Trend</h2>
+                </div>
+
+                <div class="legend">
+                    <span class="legend-price">Price</span>
+                    <span class="legend-sma">SMA</span>
+                    <span class="legend-ema">EMA</span>
+                </div>
+
+            </div>
+
+
+            <div class="chart-container">
+
+                <canvas id="priceChart"></canvas>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= ANALYSIS GRID ================= -->
+
+        <section class="analysis-grid">
+
+            <!-- RETURNS -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <div>
+                        <p class="eyebrow">PERFORMANCE</p>
+                        <h3>Returns</h3>
+                    </div>
+
+                    <span class="panel-icon">↗</span>
+
+                </div>
+
+                <div class="return-row">
+                    <span>Daily Return</span>
+                    <strong id="dailyReturn">—</strong>
+                </div>
+
+                <div class="return-row">
+                    <span>Cumulative Return</span>
+                    <strong id="cumulativeReturn">—</strong>
+                </div>
+
+                <div class="return-row">
+                    <span>Annualized Return</span>
+                    <strong id="annualReturn">—</strong>
+                </div>
+
+            </div>
+
+
+            <!-- RISK -->
+
+            <div class="panel" id="risk">
+
+                <div class="panel-header">
+
+                    <div>
+                        <p class="eyebrow">RISK ANALYSIS</p>
+                        <h3>Risk Metrics</h3>
+                    </div>
+
+                    <span class="panel-icon">◈</span>
+
+                </div>
+
+                <div class="risk-row">
+
+                    <div>
+                        <span>Volatility</span>
+                        <small>Annualized</small>
+                    </div>
+
+                    <strong id="riskVolatility">—</strong>
+
+                </div>
+
+
+                <div class="risk-row">
+
+                    <div>
+                        <span>Sharpe Ratio</span>
+                        <small>Risk-adjusted return</small>
+                    </div>
+
+                    <strong id="sharpe">—</strong>
+
+                </div>
+
+
+                <div class="risk-row">
+
+                    <div>
+                        <span>Maximum Drawdown</span>
+                        <small>Peak-to-trough</small>
+                    </div>
+
+                    <strong id="riskDrawdown">—</strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= CORRELATION ================= -->
+
+        <section class="panel correlation-panel">
+
+            <div class="section-heading">
+
+                <div>
+                    <p class="eyebrow">CROSS-ASSET ANALYSIS</p>
+                    <h2>Asset Correlation</h2>
+                </div>
+
+                <p class="small-description">
+                    Relationship between asset returns
+                </p>
+
+            </div>
+
+
+            <div class="correlation-table">
+
+                <div class="correlation-cell heading"></div>
+                <div class="correlation-cell heading">Gold</div>
+                <div class="correlation-cell heading">Bitcoin</div>
+                <div class="correlation-cell heading">NVIDIA</div>
+
+
+                <div class="correlation-cell heading">Gold</div>
+                <div class="correlation-cell high">1.00</div>
+                <div class="correlation-cell medium">0.32</div>
+                <div class="correlation-cell low">0.18</div>
+
+
+                <div class="correlation-cell heading">Bitcoin</div>
+                <div class="correlation-cell medium">0.32</div>
+                <div class="correlation-cell high">1.00</div>
+                <div class="correlation-cell medium">0.41</div>
+
+
+                <div class="correlation-cell heading">NVIDIA</div>
+                <div class="correlation-cell low">0.18</div>
+                <div class="correlation-cell medium">0.41</div>
+                <div class="correlation-cell high">1.00</div>
+
+            </div>
+
+            <p class="data-note">
+                Correlation values shown here are interface placeholders.
+                Connect them to the Python analysis output before final submission.
+            </p>
+
+        </section>
+
+
+        <!-- ================= STRATEGIES ================= -->
+
+        <section id="strategies">
+
+            <div class="section-heading">
+
+                <div>
+                    <p class="eyebrow">BACKTESTING</p>
+                    <h2>Trading Strategies</h2>
+                </div>
+
+                <span class="period-badge">
+                    Historical Simulation
+                </span>
+
+            </div>
+
+
+            <div class="strategy-grid">
+
+
+                <div class="strategy-card">
+
+                    <div class="strategy-top">
+
+                        <span class="strategy-number">01</span>
+
+                        <span class="signal neutral-signal">
+                            WAIT
+                        </span>
+
+                    </div>
+
+                    <h3>SMA Crossover</h3>
+
+                    <p>
+                        Compares short-term and long-term
+                        moving averages to identify trend changes.
+                    </p>
+
+                    <div class="strategy-value">
+
+                        <span>Strategy Return</span>
+
+                        <strong id="smaReturn">—</strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="strategy-card">
+
+                    <div class="strategy-top">
+
+                        <span class="strategy-number">02</span>
+
+                        <span class="signal neutral-signal">
+                            WAIT
+                        </span>
+
+                    </div>
+
+                    <h3>EMA Trend</h3>
+
+                    <p>
+                        Uses exponential moving averages to
+                        detect recent price trends.
+                    </p>
+
+                    <div class="strategy-value">
+
+                        <span>Strategy Return</span>
+
+                        <strong id="emaReturn">—</strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="strategy-card">
+
+                    <div class="strategy-top">
+
+                        <span class="strategy-number">03</span>
+
+                        <span class="signal neutral-signal">
+                            WAIT
+                        </span>
+
+                    </div>
+
+                    <h3>Momentum</h3>
+
+                    <p>
+                        Measures recent price movement to
+                        identify positive or negative momentum.
+                    </p>
+
+                    <div class="strategy-value">
+
+                        <span>Strategy Return</span>
+
+                        <strong id="momentumReturn">—</strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="strategy-card">
+
+                    <div class="strategy-top">
+
+                        <span class="strategy-number">04</span>
+
+                        <span class="signal neutral-signal">
+                            WAIT
+                        </span>
+
+                    </div>
+
+                    <h3>Mean Reversion</h3>
+
+                    <p>
+                        Looks for price movement away from
+                        its historical average.
+                    </p>
+
+                    <div class="strategy-value">
+
+                        <span>Strategy Return</span>
+
+                        <strong id="meanReturn">—</strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= EQUITY CURVE ================= -->
+
+        <section class="chart-section">
+
+            <div class="section-heading">
+
+                <div>
+                    <p class="eyebrow">PORTFOLIO SIMULATION</p>
+                    <h2>Strategy vs Buy & Hold</h2>
+                </div>
+
+            </div>
+
+
+            <div class="chart-container">
+
+                <canvas id="equityChart"></canvas>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= FOOTER ================= -->
+
+        <footer>
+
+            <div>
+
+                <strong>MarketLens</strong>
+
+                <p>
+                    Multi-Asset Financial Intelligence Platform
+                </p>
+
+            </div>
+
+            <p>
+                Historical analysis • Strategy backtesting • Risk analytics
+            </p>
+
+        </footer>
+
+    </main>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
