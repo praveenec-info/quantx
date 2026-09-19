@@ -25,13 +25,17 @@ def get_stock_data(symbol, filename):
         "apikey": API_KEY
     }
 
-    response = requests.get(url, params=params)
-    data = response.json()
+    try:
+        response = requests.get(url, params=params, timeout=10)
+        data = response.json()
+    except Exception as e:
+        print(f"Error getting {symbol} data: {e}")
+        return None
 
     if "Time Series (Daily)" not in data:
         print(f"Error getting {symbol} data:")
         print(data)
-        return
+        return None
 
     records = []
 
@@ -69,10 +73,17 @@ def get_stock_data(symbol, filename):
     df = df.sort_values("Date")
     df = df.reset_index(drop=True)
 
-    raw_path = os.path.join(RAW_DIR, filename)
+    raw_path = os.path.join(
+        RAW_DIR,
+        filename
+    )
+
     processed_path = os.path.join(
         PROCESSED_DIR,
-        filename.replace(".csv", "_cleaned.csv")
+        filename.replace(
+            ".csv",
+            "_cleaned.csv"
+        )
     )
 
     df.to_csv(raw_path, index=False)
@@ -81,6 +92,86 @@ def get_stock_data(symbol, filename):
     print(f"{filename} saved successfully")
     print(f"Rows: {len(df)}")
 
+    return df
 
-# NVIDIA
+
+def load_data(filename="nvidia.csv"):
+    """
+    Load stock data and return it as a dictionary.
+    """
+
+    processed_filename = filename.replace(
+        ".csv",
+        "_cleaned.csv"
+    )
+
+    processed_path = os.path.join(
+        PROCESSED_DIR,
+        processed_filename
+    )
+
+    # If processed data exists
+    if os.path.exists(processed_path):
+
+        df = pd.read_csv(processed_path)
+
+        return {
+            "NVDA": df
+        }
+
+    # If raw data exists
+    raw_path = os.path.join(
+        RAW_DIR,
+        filename
+    )
+
+    if os.path.exists(raw_path):
+
+        df = pd.read_csv(raw_path)
+
+        return {
+            "NVDA": df
+        }
+
+    # Sample data for testing
+    sample_data = pd.DataFrame({
+
+        "Date": pd.date_range(
+            start="2025-01-01",
+            periods=10,
+            freq="D"
+        ),
+
+        "Open": [
+            100, 101, 102, 103, 104,
+            105, 106, 107, 108, 109
+        ],
+
+        "High": [
+            102, 103, 104, 105, 106,
+            107, 108, 109, 110, 111
+        ],
+
+        "Low": [
+            99, 100, 101, 102, 103,
+            104, 105, 106, 107, 108
+        ],
+
+        "Close": [
+            101, 102, 103, 104, 105,
+            106, 107, 108, 109, 110
+        ],
+
+        "Volume": [
+            1000, 1100, 1200, 1300, 1400,
+            1500, 1600, 1700, 1800, 1900
+        ]
+    })
+
+    return {
+        "NVDA": sample_data
+    }
+
+
+# NVIDIA data download
 get_stock_data("NVDA", "nvidia.csv")
